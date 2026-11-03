@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Abroad Eligibility Checker</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f7f6; padding: 20px; display: flex; justify-content: center; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 450px; width: 100%; }
+        h2 { text-align: center; color: #2c3e50; }
+        label { font-weight: bold; margin-top: 10px; display: block; }
+        input { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
+        button:hover { background: #219150; }
+        #result { margin-top: 20px; padding: 15px; border-radius: 6px; background: #eef9f1; border: 1px solid #c8e6c9; display: none; }
+        ul { padding-left: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Study Abroad Eligibility</h2>
+    
+    <label for="ssc">SSC GPA (Out of 5.00):</label>
+    <input type="number" id="ssc" step="0.01" min="0" max="5" placeholder="e.g. 4.50">
+
+    <label for="hsc">HSC GPA (Out of 5.00):</label>
+    <input type="number" id="hsc" step="0.01" min="0" max="5" placeholder="e.g. 4.30">
+
+    <button onclick="checkEligibility()">Check Eligibility</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+    function checkEligibility() {
+        const ssc = parseFloat(document.getElementById('ssc').value);
+        const hsc = parseFloat(document.getElementById('hsc').value);
+        const resultDiv = document.getElementById('result');
+
+        if (isNaN(ssc) || isNaN(hsc)) {
+            resultDiv.style.display = 'block';
+            resultDiv.style.background = '#ffebee';
+            resultDiv.style.borderColor = '#ffcdd2';
+            resultDiv.innerHTML = "<b style='color:red;'>Doyakore duto GPA-i sothik bhabe boshank.</b>";
+            return;
+        }
+
+        const total = (ssc + hsc).toFixed(2);
+        let countries = [];
+        resultDiv.style.background = '#eef9f1';
+        resultDiv.style.borderColor = '#c8e6c9';
+
+        if (total >= 5.00 && total <= 5.99) {
+            countries = ["Malaysia", "Cyprus", "Russia", "Malta", "Georgia", "Uzbekistan", "Kazakhstan", "Egypt", "Nepal", "India", "Sri Lanka"];
+        } else if (total >= 6.00 && total <= 6.99) {
+            countries = ["Hungary", "Turkey", "China", "Italy", "Spain", "Poland", "Lithuania", "Latvia", "Taiwan", "Dubai (UAE)", "Saudi Arabia", "Qatar", "Thailand", "Vietnam", "Indonesia", "Brazil", "Romania", "Bulgaria"];
+        } else if (total >= 7.00 && total <= 8.79) {
+            countries = ["USA", "South Korea", "France", "Japan", "Finland", "Sweden", "Czech Republic", "Portugal", "Macau", "South Africa", "Chile", "Greece", "Croatia", "Slovakia"];
+        } else if (total >= 8.80 && total <= 10.00) {
+            countries = ["UK", "Canada", "Australia", "Ireland", "Denmark", "Netherlands", "New Zealand", "Belgium", "Austria", "Hong Kong", "Luxembourg", "Singapore", "Switzerland", "Norway", "Germany (Public - Free Tuition)"];
+        }
+
+        if (countries.length > 0) {
+            resultDiv.innerHTML = `<h3>Total GPA: ${total}</h3><p><b>Eligible Countries:</b></p><ul>` + 
+                countries.map(c => `<li>${c}</li>`).join('') + `</ul>`;
+        } else {
+            resultDiv.innerHTML = `<h3>Total GPA: ${total}</h3><p>Foundation ba Language Program recommend kora hochhe.</p>`;
+        }
+
+        resultDiv.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
