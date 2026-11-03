@@ -3,33 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Abroad Eligibility Checker</title>
+    <title>GBOT Study Abroad Eligibility Checker</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f7f6; padding: 20px; display: flex; justify-content: center; }
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 450px; width: 100%; }
-        h2 { text-align: center; color: #2c3e50; }
-        label { font-weight: bold; margin-top: 10px; display: block; }
-        input { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
-        button:hover { background: #219150; }
-        #result { margin-top: 20px; padding: 15px; border-radius: 6px; background: #eef9f1; border: 1px solid #c8e6c9; display: none; }
-        ul { padding-left: 20px; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #eef2f3 0%, #8e9eab 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 10px;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+            max-width: 480px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
+            padding: 28px 20px;
+            text-align: center;
+        }
+        .gbot-logo-container {
+            width: 80px;
+            height: 80px;
+            background: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            padding: 8px;
+        }
+        .gbot-logo-svg {
+            width: 100%;
+            height: 100%;
+        }
+        .card-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .card-header p {
+            font-size: 13px;
+            opacity: 0.88;
+            margin-top: 3px;
+        }
+        .card-body {
+            padding: 25px 30px 15px 30px;
+        }
+        .input-group {
+            margin-bottom: 18px;
+        }
+        label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 6px;
+            display: block;
+        }
+        label i {
+            color: #2a5298;
+            margin-right: 6px;
+        }
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            border-color: #2a5298;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #27ae60 0%, #2ec4b6 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+            transition: all 0.3s ease;
+            margin-top: 5px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(39, 174, 96, 0.4);
+        }
+        #result {
+            margin-top: 22px;
+            padding: 18px;
+            border-radius: 10px;
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+        .result-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+        .result-header {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            padding-bottom: 8px;
+        }
+        ul.country-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+            list-style: none;
+        }
+        ul.country-list li {
+            background: #ffffff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            display: flex;
+            align-items: center;
+        }
+        ul.country-list li i {
+            color: #27ae60;
+            margin-right: 6px;
+            font-size: 12px;
+        }
+
+        /* --- Footer Section (Without Social Links) --- */
+        .card-footer {
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 18px 25px;
+            text-align: center;
+        }
+        .gbot-goal {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.5;
+            margin-bottom: 10px;
+            background: #ffffff;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px dashed #cbd5e1;
+        }
+        .creator-tag {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .creator-tag span {
+            color: #2a5298;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>Study Abroad Eligibility</h2>
-    
-    <label for="ssc">SSC GPA (Out of 5.00):</label>
-    <input type="number" id="ssc" step="0.01" min="0" max="5" placeholder="e.g. 4.50">
+    <div class="card-header">
+        <!-- GBOT Circular Logo SVG -->
+        <div class="gbot-logo-container">
+            <svg class="gbot-logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 100 20 C 50 20 20 60 20 100 C 20 120 28 140 40 155 C 38 135 48 115 65 105 C 80 96 100 100 115 110 C 130 120 145 130 165 120 C 180 112 185 90 175 70 C 160 40 135 20 100 20 Z" fill="none" stroke="#3b82f6" stroke-width="8" stroke-linecap="round"/>
+                <path d="M 100 180 C 150 180 180 140 180 100 C 180 80 172 60 160 45 C 162 65 152 85 135 95 C 120 104 100 100 85 90 C 70 80 55 70 35 80 C 20 88 15 110 25 130 C 40 160 65 180 100 180 Z" fill="none" stroke="#3b82f6" stroke-width="8" stroke-linecap="round"/>
+                <path d="M 35 100 L 70 100 L 78 75 L 88 125 L 98 85 L 105 108 L 112 95 L 120 100 L 165 100" fill="none" stroke="#2563eb" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                <text x="135" y="106" font-family="'Poppins', sans-serif" font-weight="700" font-size="20" fill="#1e3c72">GBOT</text>
+            </svg>
+        </div>
+        <h2>GBOT Study Abroad</h2>
+        <p>Country Eligibility Checker</p>
+    </div>
 
-    <label for="hsc">HSC GPA (Out of 5.00):</label>
-    <input type="number" id="hsc" step="0.01" min="0" max="5" placeholder="e.g. 4.30">
+    <div class="card-body">
+        <div class="input-group">
+            <label for="ssc"><i class="fa-solid fa-book-bookmark"></i> SSC GPA (Out of 5.00):</label>
+            <input type="number" id="ssc" step="0.01" min="0" max="5" placeholder="e.g. 4.50">
+        </div>
 
-    <button onclick="checkEligibility()">Check Eligibility</button>
+        <div class="input-group">
+            <label for="hsc"><i class="fa-solid fa-award"></i> HSC GPA (Out of 5.00):</label>
+            <input type="number" id="hsc" step="0.01" min="0" max="5" placeholder="e.g. 4.30">
+        </div>
 
-    <div id="result"></div>
+        <button onclick="checkEligibility()"><i class="fa-solid fa-plane-departure"></i> Check Eligibility</button>
+
+        <div id="result"></div>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="card-footer">
+        <div class="gbot-goal">
+            <i class="fa-solid fa-bullseye" style="color: #2a5298;"></i> <b>GBOT Goal:</b> Empowering students with fast, reliable, and accessible study abroad eligibility insights worldwide.
+        </div>
+
+        <div class="creator-tag">
+            Created by <span>TAZIM AHMED</span>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -38,18 +243,15 @@
         const hsc = parseFloat(document.getElementById('hsc').value);
         const resultDiv = document.getElementById('result');
 
-        if (isNaN(ssc) || isNaN(hsc)) {
+        if (isNaN(ssc) || isNaN(hsc) || ssc < 0 || ssc > 5 || hsc < 0 || hsc > 5) {
+            resultDiv.className = 'result-error';
             resultDiv.style.display = 'block';
-            resultDiv.style.background = '#ffebee';
-            resultDiv.style.borderColor = '#ffcdd2';
-            resultDiv.innerHTML = "<b style='color:red;'>Doyakore duto GPA-i sothik bhabe boshank.</b>";
+            resultDiv.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> <b>Doyakore 0 to 5.00-er modhe sothik GPA boshank.</b>`;
             return;
         }
 
         const total = (ssc + hsc).toFixed(2);
         let countries = [];
-        resultDiv.style.background = '#eef9f1';
-        resultDiv.style.borderColor = '#c8e6c9';
 
         if (total >= 5.00 && total <= 5.99) {
             countries = ["Malaysia", "Cyprus", "Russia", "Malta", "Georgia", "Uzbekistan", "Kazakhstan", "Egypt", "Nepal", "India", "Sri Lanka"];
@@ -58,14 +260,28 @@
         } else if (total >= 7.00 && total <= 8.79) {
             countries = ["USA", "South Korea", "France", "Japan", "Finland", "Sweden", "Czech Republic", "Portugal", "Macau", "South Africa", "Chile", "Greece", "Croatia", "Slovakia"];
         } else if (total >= 8.80 && total <= 10.00) {
-            countries = ["UK", "Canada", "Australia", "Ireland", "Denmark", "Netherlands", "New Zealand", "Belgium", "Austria", "Hong Kong", "Luxembourg", "Singapore", "Switzerland", "Norway", "Germany (Public - Free Tuition)"];
+            countries = ["UK", "Canada", "Australia", "Ireland", "Denmark", "Netherlands", "New Zealand", "Belgium", "Austria", "Hong Kong", "Luxembourg", "Singapore", "Switzerland", "Norway", "Germany (Public)"];
         }
 
+        resultDiv.className = 'result-success';
+        
         if (countries.length > 0) {
-            resultDiv.innerHTML = `<h3>Total GPA: ${total}</h3><p><b>Eligible Countries:</b></p><ul>` + 
-                countries.map(c => `<li>${c}</li>`).join('') + `</ul>`;
+            resultDiv.innerHTML = `
+                <div class="result-header">
+                    <span>Total GPA: ${total}</span>
+                    <i class="fa-solid fa-circle-check" style="color: #27ae60;"></i>
+                </div>
+                <p style="font-size: 13px; font-weight:600; margin-top:5px;">Eligible Countries (${countries.length}):</p>
+                <ul class="country-list">` + 
+                countries.map(c => `<li><i class="fa-solid fa-globe"></i> ${c}</li>`).join('') + 
+                `</ul>`;
         } else {
-            resultDiv.innerHTML = `<h3>Total GPA: ${total}</h3><p>Foundation ba Language Program recommend kora hochhe.</p>`;
+            resultDiv.innerHTML = `
+                <div class="result-header">
+                    <span>Total GPA: ${total}</span>
+                    <i class="fa-solid fa-circle-info" style="color: #e67e22;"></i>
+                </div>
+                <p style="font-size: 13px; margin-top:5px;">Foundation ba Language Program recommend kora hochhe.</p>`;
         }
 
         resultDiv.style.display = 'block';
